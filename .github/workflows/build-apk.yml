@@ -1,0 +1,42 @@
+name: Build SB APK
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Extract project
+        run: |
+          unzip -q SB_SecondBrain_Android_Project.zip
+          cd SB_SecondBrain_Android
+          python3 - <<'PY'
+          p="app/build.gradle.kts"
+          s=open(p).read()
+          s=s.replace(
+              'dependencies {',
+              'dependencies {\n    implementation(platform("androidx.compose:compose-bom:2025.01.01"))'
+          )
+          open(p,"w").write(s)
+          PY
+
+      - name: Build APK
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: "8.9"
+
+      - name: Assemble
+        run: |
+          cd SB_SecondBrain
+          gradle assembleDebug
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: SB-debug-apk
+          path: SB_SecondBrain/app/build/outputs/apk/debug/app-debug.apk
