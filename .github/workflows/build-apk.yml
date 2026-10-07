@@ -32,11 +32,11 @@ jobs:
 
       - name: Assemble
         run: |
-          cd SB_SecondBrain
+          cd SB_SecondBrain_Android
           gradle assembleDebug
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: SB-debug-apk
-          path: SB_SecondBrain/app/build/outputs/apk/debug/app-debug.apk
+          path: path: SB_SecondBrain_Android/app/build/outputs/apk/debug/app-debug.apk
